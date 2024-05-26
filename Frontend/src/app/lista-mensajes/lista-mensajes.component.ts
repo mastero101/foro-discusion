@@ -43,4 +43,21 @@ export class ListaMensajesComponent implements OnInit {
         console.error('Error al obtener los mensajes:', error);
       });
   }
+
+  confirmarEliminarMensaje(mensajeId: string) {
+    if (confirm('¿Estás seguro de que deseas eliminar este mensaje?')) {
+      this.eliminarMensaje(mensajeId);
+    }
+  }
+
+  eliminarMensaje(mensajeId: string) {
+    axios.delete(`https://foro-discusion.onrender.com/messages/${mensajeId}`)
+      .then(() => {
+        // Actualizar la lista de mensajes después de eliminar
+        this.obtenerMensajes();
+      })
+      .catch(error => {
+        console.error('Error al eliminar el mensaje:', error);
+      });
+  }
 }

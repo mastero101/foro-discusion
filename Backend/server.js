@@ -59,6 +59,20 @@ app.get('/messages', (req, res) => {
     });
 });
 
+// Ruta para manejar la solicitud DELETE para eliminar un mensaje por su ID
+app.delete('/messages/:id', (req, res) => {
+  const messageId = req.params.id;
+  Message.findByIdAndDelete(messageId)
+    .then(() => {
+      io.emit('messageDeleted', messageId); // Emitir el ID del mensaje eliminado a todos los clientes
+      res.status(200).json({ message: 'Mensaje eliminado exitosamente' });
+    })
+    .catch(err => {
+      console.error('Error al eliminar el mensaje:', err);
+      res.status(500).json({ error: 'Error interno del servidor' });
+    });
+});
+
 // Socket.IO conexión
 io.on('connection', (socket) => {
   console.log('Nuevo cliente conectado');
