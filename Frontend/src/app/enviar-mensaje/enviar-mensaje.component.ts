@@ -35,7 +35,7 @@ export class EnviarMensajeComponent {
 
     const nuevoMensaje = { username: this.usuario, content: this.contenido };
 
-    axios.post('http://localhost:5000/new-message', nuevoMensaje)
+    axios.post('https://foro-discusion.onrender.com/new-message', nuevoMensaje)
       .then(() => {
         alert('Mensaje enviado exitosamente');
         this.usuario = '';

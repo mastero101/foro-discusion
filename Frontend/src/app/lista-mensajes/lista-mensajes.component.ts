@@ -35,7 +35,7 @@ export class ListaMensajesComponent implements OnInit {
   }
 
   obtenerMensajes() {
-    axios.get<any[]>('http://localhost:5000/messages')
+    axios.get<any[]>('https://foro-discusion.onrender.com/messages')
       .then(response => {
         this.mensajes = response.data;
       })
