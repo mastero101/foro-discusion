@@ -1,0 +1,41 @@
+.mensajes-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Alineación de los mensajes a la izquierda */
+  margin: 20px;
+}
+
+.mensaje-card {
+  max-width: 80%;
+  margin-bottom: 10px;
+  background-color: black;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+}
+
+.mensaje-card.mine {
+  align-self: flex-end; /* Alineación de los mensajes del usuario actual a la derecha */
+  background-color: #e0f7fa;
+}
+
+.mat-card-title,
+.mat-card-subtitle {
+  margin: 0;
+}
+
+.mat-card-title {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.mat-card-subtitle {
+  font-size: 0.8em;
+  color: gray;
+}
+
+.mat-toolbar {
+  display: flex;
+  justify-content: center; /* Centrar horizontalmente */
+  align-items: center; /* Centrar verticalmente */
+}

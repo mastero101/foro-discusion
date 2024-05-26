@@ -1,0 +1,19 @@
+<!-- sidenavbar.component.html -->
+<mat-sidenav-container class="example-container">
+    <mat-sidenav mode="side" [opened]="!hideSidenav">
+        <mat-toolbar>Menu</mat-toolbar>
+        <mat-nav-list>
+            <a mat-list-item routerLink="/enviar-mensaje">Enviar Mensaje</a>
+            <a mat-list-item routerLink="/lista-mensajes">Lista de Mensajes</a>
+        </mat-nav-list>
+    </mat-sidenav>
+    <mat-sidenav-content>
+        <button mat-button (click)="toggleSidenav()" class="hide-button">
+            {{ hideSidenav ? 'Mostrar' : 'Ocultar' }} 
+        </button>
+            <router-outlet></router-outlet>
+    </mat-sidenav-content>
+</mat-sidenav-container>
+
+
+  

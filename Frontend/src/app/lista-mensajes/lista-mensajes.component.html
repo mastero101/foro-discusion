@@ -1,0 +1,24 @@
+<mat-toolbar color="primary">
+  Foro de Discusión
+</mat-toolbar>
+
+<div class="mensajes-container">
+  <mat-card *ngFor="let mensaje of mensajes" 
+            [ngClass]="{'mine': mensaje.username === usuarioActual}" 
+            class="mensaje-card">
+    <mat-card-header>
+      <mat-card-title>{{ mensaje.username }}</mat-card-title>
+      <mat-card-subtitle>{{ mensaje.timestamp | date:'short' }}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <p>{{ mensaje.content }}</p>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<app-enviar-mensaje></app-enviar-mensaje>
+
+
+
+
+  
