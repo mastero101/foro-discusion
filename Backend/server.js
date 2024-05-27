@@ -18,7 +18,10 @@ app.use(express.json());
 // Conectar a MongoDB
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('MongoDB connected'))
-  .catch(err => console.log(err));
+  .catch(err => {
+    console.error('Error al conectar con MongoDB:', err);
+    process.exit(1);
+  });
 
 // Modelos
 const Message = require('./models/message');
@@ -26,7 +29,8 @@ const User = require('./models/user');
 
 // Middleware para verificar el token de JWT
 const authMiddleware = (req, res, next) => {
-  const token = req.headers['authorization'];
+  const token = req.headers['authorization'] ? req.headers['authorization'].split(' ')[1] : null;
+
   if (!token) {
     return res.status(403).json({ error: 'No token provided' });
   }
@@ -36,37 +40,32 @@ const authMiddleware = (req, res, next) => {
       return res.status(500).json({ error: 'Failed to authenticate token' });
     }
 
+    // Si el token es válido, extraer el ID de usuario del token y establecerlo en req.userId
     req.userId = decoded.userId;
+
+    // Llamar a next() para pasar al siguiente middleware o ruta
     next();
   });
 };
+
+
 
 // Rutas
 app.get('/', (req, res) => {
   res.send('Bienvenido al foro de discusión');
 });
 
-// Ruta para manejar la solicitud POST para agregar un nuevo mensaje
 app.post('/new-message', authMiddleware, (req, res) => {
-  // Extraer el ID de usuario del token JWT
-  const userId = req.userId;
+  const { username, content } = req.body;
 
-  // Buscar el usuario en la base de datos para obtener su nombre de usuario
-  User.findById(userId)
-    .then(user => {
-      if (!user) {
-        return res.status(404).json({ error: 'Usuario no encontrado' });
-      }
+  if (!username || !content) {
+    return res.status(400).json({ error: 'Nombre de usuario y contenido del mensaje son obligatorios' });
+  }
 
-      const username = user.username;
-      const { content } = req.body;
-
-      // Crear y guardar el nuevo mensaje
-      const newMessage = new Message({ username, content });
-      return newMessage.save();
-    })
+  // Crear y guardar el nuevo mensaje
+  const newMessage = new Message({ username, content });
+  newMessage.save()
     .then(() => {
-      // Emitir el mensaje a todos los clientes conectados
       io.emit('newMessage', { username, content });
       res.status(201).json({ message: 'Mensaje guardado exitosamente' });
     })
@@ -76,33 +75,29 @@ app.post('/new-message', authMiddleware, (req, res) => {
     });
 });
 
-// Ruta para manejar la solicitud GET para obtener todos los mensajes
+
 app.get('/messages', (req, res) => {
   Message.find()
     .then(messages => {
       res.json(messages);
     })
     .catch(err => {
-      console.error('Error al obtener los mensajes:', err);
       res.status(500).json({ error: 'Error interno del servidor' });
     });
 });
 
-// Ruta para manejar la solicitud DELETE para eliminar un mensaje por su ID
 app.delete('/messages/:id', authMiddleware, (req, res) => {
   const messageId = req.params.id;
   Message.findByIdAndDelete(messageId)
     .then(() => {
-      io.emit('messageDeleted', messageId); // Emitir el ID del mensaje eliminado a todos los clientes
+      io.emit('messageDeleted', messageId);
       res.status(200).json({ message: 'Mensaje eliminado exitosamente' });
     })
     .catch(err => {
-      console.error('Error al eliminar el mensaje:', err);
       res.status(500).json({ error: 'Error interno del servidor' });
     });
 });
 
-// Ruta de registro de usuario
 app.post('/auth/register', async (req, res) => {
   const { username, password } = req.body;
 
@@ -111,12 +106,10 @@ app.post('/auth/register', async (req, res) => {
     await user.save();
     res.status(201).json({ message: 'Usuario registrado exitosamente' });
   } catch (error) {
-    console.error('Error al registrar el usuario:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
 
-// Ruta de login de usuario
 app.post('/auth/login', async (req, res) => {
   const { username, password } = req.body;
 
@@ -129,25 +122,19 @@ app.post('/auth/login', async (req, res) => {
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
     res.json({ token });
   } catch (error) {
-    console.error('Error al iniciar sesión:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
 
-// Socket.IO conexión
 io.on('connection', (socket) => {
-  console.log('Nuevo cliente conectado');
-  
-  // Enviar todos los mensajes al cliente cuando se conecta
   Message.find().then(messages => {
     socket.emit('initialMessages', messages);
   });
 
-  // Manejar el evento de nuevo mensaje
   socket.on('newMessage', (msg) => {
     const message = new Message(msg);
     message.save().then(() => {
-      io.emit('newMessage', msg); // Emitir el mensaje a todos los clientes
+      io.emit('newMessage', msg);
     });
   });
 
@@ -156,7 +143,6 @@ io.on('connection', (socket) => {
   });
 });
 
-// Iniciar el servidor
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   console.log(`Servidor corriendo en el puerto ${PORT}`);

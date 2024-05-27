@@ -31,6 +31,9 @@ export class RegistroComponent implements OnInit{
   registroForm: FormGroup;
   passwordFieldType: string = 'password';
 
+  endpoint = "https://foro-discusion.onrender.com"
+  endpoint2 = "http://localhost:5000"
+
   constructor(private fb: FormBuilder) {
     this.registroForm = this.fb.group({
       username: ['', Validators.required],
@@ -43,7 +46,7 @@ export class RegistroComponent implements OnInit{
   onSubmit(): void {
     if (this.registroForm.valid) {
       const { username, password } = this.registroForm.value;
-      axios.post('https://foro-discusion.onrender.com/auth/register', { username, password })
+      axios.post(this.endpoint +'/auth/register', { username, password })
         .then(response => {
           alert('Registro exitoso');
         })

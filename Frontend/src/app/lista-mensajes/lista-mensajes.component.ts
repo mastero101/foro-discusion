@@ -28,6 +28,9 @@ export class ListaMensajesComponent implements OnInit {
   mensajes: any[] = [];
   usuarioActual: string = 'nombreDeUsuario';
 
+  endpoint = "https://foro-discusion.onrender.com"
+  endpoint2 = "http://localhost:5000"
+
   constructor() { }
 
   ngOnInit(): void {
@@ -35,7 +38,7 @@ export class ListaMensajesComponent implements OnInit {
   }
 
   obtenerMensajes() {
-    axios.get<any[]>('https://foro-discusion.onrender.com/messages')
+    axios.get<any[]>(this.endpoint + '/messages')
       .then(response => {
         this.mensajes = response.data;
       })

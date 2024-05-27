@@ -27,14 +27,17 @@ export class EnviarMensajeComponent {
   mensaje: string = '';
   contenido: string = '';
 
+  endpoint = "https://foro-discusion.onrender.com"
+  endpoint2 = "http://localhost:5000"
+
   constructor(private authService: AuthService) { }
 
   enviarMensaje() {
     const usuarioActual = this.authService.getUsername();
     const token = localStorage.getItem('token');
-    console.log(usuarioActual,this.mensaje,token)
     if (this.mensaje && usuarioActual && token) {
-      axios.post('https://foro-discusion.onrender.com/new-message', {
+      axios.post(this.endpoint + '/new-message', {
+        username: usuarioActual, // Incluir el nombre de usuario del remitente
         content: this.mensaje
       }, {
         headers: {
@@ -50,4 +53,5 @@ export class EnviarMensajeComponent {
       });
     }
   }
+  
 }

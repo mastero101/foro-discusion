@@ -6,6 +6,8 @@ import axios from 'axios';
 })
 export class AuthService {
     private usuarioActual: string | null = null;
+    endpoint = "https://foro-discusion.onrender.com"
+    endpoint2 = "http://localhost:5000"
     
     constructor() { }
 
@@ -24,7 +26,7 @@ export class AuthService {
     }
 
     login(username: string, password: string): Promise<void> {
-        return axios.post<any>('https://foro-discusion.onrender.com/auth/login', { username, password })
+        return axios.post<any>( this.endpoint + '/auth/login', { username, password })
           .then(response => {
             localStorage.setItem('token', response.data.token);
             localStorage.setItem('username', username);
@@ -34,7 +36,7 @@ export class AuthService {
     // Método para iniciar sesión y obtener el token JWT
     iniciarSesion(username: string, password: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
-            axios.post<any>('https://foro-discusion.onrender.com/auth/login', { username, password })
+            axios.post<any>( this.endpoint +'/auth/login', { username, password })
             .then(response => {
                 const token = response.data.token;
                 localStorage.setItem('token', token);
