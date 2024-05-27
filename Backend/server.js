@@ -86,9 +86,25 @@ app.get('/messages', (req, res) => {
     });
 });
 
+// Ruta para manejar la solicitud DELETE para eliminar un mensaje por su ID
 app.delete('/messages/:id', authMiddleware, (req, res) => {
   const messageId = req.params.id;
-  Message.findByIdAndDelete(messageId)
+  const userId = req.userId;
+
+  Message.findById(messageId)
+    .then(message => {
+      if (!message) {
+        return res.status(404).json({ error: 'Mensaje no encontrado' });
+      }
+
+      // Verificar si el usuario tiene permiso para eliminar el mensaje
+      if (message.userId !== userId) {
+        return res.status(403).json({ error: 'No tienes permiso para eliminar este mensaje' });
+      }
+
+      // Eliminar el mensaje de la base de datos
+      return Message.findByIdAndDelete(messageId);
+    })
     .then(() => {
       io.emit('messageDeleted', messageId);
       res.status(200).json({ message: 'Mensaje eliminado exitosamente' });

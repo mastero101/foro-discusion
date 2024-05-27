@@ -39,3 +39,13 @@
   justify-content: center; /* Centrar horizontalmente */
   align-items: center; /* Centrar verticalmente */
 }
+
+.mat-card-actions {
+  display: flex;
+  justify-content: flex-end; /* Alinear los botones al final del mensaje */
+  margin-top: 10px; /* Espacio entre el contenido del mensaje y los botones */
+}
+
+.mat-icon-button {
+  margin-left: 5px; /* Espacio entre los botones */
+}

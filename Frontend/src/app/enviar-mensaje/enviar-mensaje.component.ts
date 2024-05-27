@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
 import axios from 'axios';
 
 import { AuthService } from '../auth.service';
@@ -27,6 +27,8 @@ export class EnviarMensajeComponent {
   mensaje: string = '';
   contenido: string = '';
 
+  @Output() mensajeEnviado = new EventEmitter<void>();
+
   endpoint = "https://foro-discusion.onrender.com"
   endpoint2 = "http://localhost:5000"
 
@@ -37,16 +39,17 @@ export class EnviarMensajeComponent {
     const token = localStorage.getItem('token');
     if (this.mensaje && usuarioActual && token) {
       axios.post(this.endpoint + '/new-message', {
-        username: usuarioActual, // Incluir el nombre de usuario del remitente
+        username: usuarioActual,
         content: this.mensaje
       }, {
         headers: {
-          'Authorization': `Bearer ${token}` // Pasar el token JWT en la cabecera de la solicitud
+          'Authorization': `Bearer ${token}`
         }
       })
       .then(response => {
         console.log('Mensaje enviado:', this.mensaje);
-        this.mensaje = ''; // Limpiar el campo de mensaje después de enviarlo
+        this.mensaje = '';
+        this.mensajeEnviado.emit();
       })
       .catch(error => {
         console.error('Error al enviar el mensaje:', error);

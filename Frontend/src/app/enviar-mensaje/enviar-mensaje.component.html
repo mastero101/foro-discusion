@@ -2,16 +2,12 @@
   <mat-card-title>Enviar Mensaje</mat-card-title>
   <mat-card-content>
     <form (ngSubmit)="enviarMensaje()">
-      <!-- Si necesitas que el usuario ingrese su nombre de usuario -->
-      <!-- <mat-form-field class="full-width">
-        <mat-label>Usuario</mat-label>
-        <input matInput [(ngModel)]="usuario" name="usuario" required>
-      </mat-form-field> -->
       <mat-form-field class="full-width">
         <mat-label>Mensaje</mat-label>
-        <textarea matInput [(ngModel)]="mensaje" name="contenido" required></textarea>
+        <textarea matInput [(ngModel)]="mensaje" name="contenido" required (keyup.enter)="enviarMensaje()"></textarea>
       </mat-form-field>
       <button mat-raised-button color="primary" type="submit">Enviar</button>
     </form>
   </mat-card-content>
 </mat-card>
+

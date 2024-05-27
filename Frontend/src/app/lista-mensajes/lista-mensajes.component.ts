@@ -7,6 +7,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
 
 import { EnviarMensajeComponent } from '../enviar-mensaje/enviar-mensaje.component';
 
@@ -19,6 +20,7 @@ import { EnviarMensajeComponent } from '../enviar-mensaje/enviar-mensaje.compone
     MatCardModule,
     MatButtonModule,
     MatInputModule,
+    MatIconModule,
     EnviarMensajeComponent
   ],
   templateUrl: './lista-mensajes.component.html',
@@ -47,12 +49,6 @@ export class ListaMensajesComponent implements OnInit {
       });
   }
 
-  confirmarEliminarMensaje(mensajeId: string) {
-    if (confirm('¿Estás seguro de que deseas eliminar este mensaje?')) {
-      this.eliminarMensaje(mensajeId);
-    }
-  }
-
   eliminarMensaje(id: string) {
     const token = localStorage.getItem('token');
     if (token && confirm('¿Estás seguro de que quieres eliminar este mensaje?')) {
@@ -61,12 +57,15 @@ export class ListaMensajesComponent implements OnInit {
       })
       .then(() => {
         this.mensajes = this.mensajes.filter(m => m._id !== id);
-        alert('Mensaje eliminado exitosamente');
       })
       .catch(error => {
         console.error('Error al eliminar el mensaje:', error);
         alert('Error al eliminar el mensaje');
       });
     }
+  }
+
+  actualizarMensajes() {
+    this.obtenerMensajes();
   }
 }
