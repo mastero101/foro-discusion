@@ -1,0 +1,28 @@
+<div fxLayout="column" fxLayoutAlign="center center" style="height: 100vh;">
+  <mat-card fxFlex="0 1 400px" style="position: relative;">
+    <div fxLayout="column" fxLayoutAlign="center center">
+      <mat-card-title>Registro</mat-card-title>
+    </div>
+    <button mat-icon-button (click)="togglePasswordVisibility()" style="position: absolute; top: 16px; right: 16px;">
+      <mat-icon>{{ passwordFieldType === 'password' ? 'visibility' : 'visibility_off' }}</mat-icon>
+    </button>
+    <mat-card-content>
+      <form (ngSubmit)="onSubmit()" [formGroup]="registroForm">
+        <mat-form-field appearance="fill" style="width: 100%;">
+          <mat-label>Usuario</mat-label>
+          <input matInput formControlName="username" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" style="width: 100%;">
+          <mat-label>Contraseña</mat-label>
+          <input matInput [type]="passwordFieldType" formControlName="password" />
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" type="submit">Registrar</button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+
+  

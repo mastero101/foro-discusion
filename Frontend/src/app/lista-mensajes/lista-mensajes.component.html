@@ -4,8 +4,8 @@
 
 <div class="mensajes-container">
   <mat-card *ngFor="let mensaje of mensajes" 
-          [ngClass]="{'mine': mensaje.username === usuarioActual}" 
-          class="mensaje-card">
+            [ngClass]="{'mine': mensaje.username === usuarioActual}" 
+            class="mensaje-card">
     <mat-card-header>
       <mat-card-title>{{ mensaje.username }}</mat-card-title>
       <mat-card-subtitle>{{ mensaje.timestamp | date:'short' }}</mat-card-subtitle>
@@ -14,12 +14,13 @@
       <p>{{ mensaje.content }}</p>
     </mat-card-content>
     <mat-card-actions>
-      <button mat-button color="warn" (click)="confirmarEliminarMensaje(mensaje._id)">Eliminar</button>
+      <button mat-button *ngIf="mensaje.username === usuarioActual" (click)="eliminarMensaje(mensaje._id)">Eliminar</button>
     </mat-card-actions>
   </mat-card>
 </div>
 
 <app-enviar-mensaje></app-enviar-mensaje>
+
 
 
 

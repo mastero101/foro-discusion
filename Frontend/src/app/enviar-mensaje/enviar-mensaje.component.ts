@@ -22,28 +22,25 @@ import { MatInputModule } from '@angular/material/input';
   styleUrl: './enviar-mensaje.component.scss'
 })
 export class EnviarMensajeComponent {
-  usuario: string = '';
+  mensaje: string = '';
   contenido: string = '';
 
   constructor() { }
 
   enviarMensaje() {
-    if (this.usuario.trim() === '' || this.contenido.trim() === '') {
-      alert('Por favor ingrese un usuario y un mensaje.');
-      return;
-    }
-
-    const nuevoMensaje = { username: this.usuario, content: this.contenido };
-
-    axios.post('https://foro-discusion.onrender.com/new-message', nuevoMensaje)
-      .then(() => {
-        alert('Mensaje enviado exitosamente');
-        this.usuario = '';
-        this.contenido = '';
+    const usuarioActual = ''; // Aquí obtén el usuario actual (por ejemplo, desde tu servicio de autenticación)
+    if (this.mensaje && usuarioActual) {
+      axios.post('https://foro-discusion.onrender.com/new-message', {
+        username: usuarioActual,
+        content: this.mensaje
+      })
+      .then(response => {
+        console.log('Mensaje enviado:', this.contenido);
+        this.mensaje = ''; // Limpiar el campo de mensaje después de enviarlo
       })
       .catch(error => {
         console.error('Error al enviar el mensaje:', error);
-        alert('Ocurrió un error al enviar el mensaje.');
       });
+    }
   }
 }

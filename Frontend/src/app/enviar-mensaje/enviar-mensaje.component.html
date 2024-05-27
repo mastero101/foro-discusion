@@ -2,10 +2,11 @@
   <mat-card-title>Enviar Mensaje</mat-card-title>
   <mat-card-content>
     <form (ngSubmit)="enviarMensaje()">
-      <mat-form-field class="full-width">
+      <!-- Si necesitas que el usuario ingrese su nombre de usuario -->
+      <!-- <mat-form-field class="full-width">
         <mat-label>Usuario</mat-label>
         <input matInput [(ngModel)]="usuario" name="usuario" required>
-      </mat-form-field>
+      </mat-form-field> -->
       <mat-form-field class="full-width">
         <mat-label>Mensaje</mat-label>
         <textarea matInput [(ngModel)]="contenido" name="contenido" required></textarea>

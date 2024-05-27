@@ -1,0 +1,32 @@
+body {
+    margin: 0;
+    font-family: Roboto, sans-serif;
+  }
+  
+  mat-card {
+    margin: 20px;
+  }
+  
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  mat-form-field {
+    margin-bottom: 20px;
+  }
+  
+  button {
+    align-self: center;
+    width: 100%;
+  }
+  
+  @media (max-width: 600px) {
+    mat-card {
+      width: 90%;
+    }
+  
+    button {
+      width: 100%;
+    }
+  }

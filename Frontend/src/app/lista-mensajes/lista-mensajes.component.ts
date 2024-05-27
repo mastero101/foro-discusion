@@ -50,14 +50,20 @@ export class ListaMensajesComponent implements OnInit {
     }
   }
 
-  eliminarMensaje(mensajeId: string) {
-    axios.delete(`https://foro-discusion.onrender.com/messages/${mensajeId}`)
+  eliminarMensaje(id: string) {
+    const token = localStorage.getItem('token');
+    if (token && confirm('¿Estás seguro de que quieres eliminar este mensaje?')) {
+      axios.delete(`https://foro-discusion.onrender.com/messages/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
       .then(() => {
-        // Actualizar la lista de mensajes después de eliminar
-        this.obtenerMensajes();
+        this.mensajes = this.mensajes.filter(m => m._id !== id);
+        alert('Mensaje eliminado exitosamente');
       })
       .catch(error => {
         console.error('Error al eliminar el mensaje:', error);
+        alert('Error al eliminar el mensaje');
       });
+    }
   }
 }
