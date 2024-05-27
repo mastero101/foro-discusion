@@ -48,11 +48,26 @@ app.get('/', (req, res) => {
 
 // Ruta para manejar la solicitud POST para agregar un nuevo mensaje
 app.post('/new-message', authMiddleware, (req, res) => {
-  const { username, content } = req.body;
-  const newMessage = new Message({ username, content });
-  newMessage.save()
+  // Extraer el ID de usuario del token JWT
+  const userId = req.userId;
+
+  // Buscar el usuario en la base de datos para obtener su nombre de usuario
+  User.findById(userId)
+    .then(user => {
+      if (!user) {
+        return res.status(404).json({ error: 'Usuario no encontrado' });
+      }
+
+      const username = user.username;
+      const { content } = req.body;
+
+      // Crear y guardar el nuevo mensaje
+      const newMessage = new Message({ username, content });
+      return newMessage.save();
+    })
     .then(() => {
-      io.emit('newMessage', { username, content }); // Emitir el mensaje a todos los clientes
+      // Emitir el mensaje a todos los clientes conectados
+      io.emit('newMessage', { username, content });
       res.status(201).json({ message: 'Mensaje guardado exitosamente' });
     })
     .catch(err => {

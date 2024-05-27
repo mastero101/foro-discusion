@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import axios from 'axios';
+import { AuthService } from '../auth.service';
 
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -31,7 +31,7 @@ export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   passwordFieldType: string = 'password';
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private authService: AuthService) {
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required]
@@ -43,9 +43,8 @@ export class LoginComponent implements OnInit {
   onSubmit(): void {
     if (this.loginForm.valid) {
       const { username, password } = this.loginForm.value;
-      axios.post('https://foro-discusion.onrender.com/auth/login', { username, password })
-        .then(response => {
-          localStorage.setItem('token', response.data.token);
+      this.authService.login(username, password)
+        .then(() => {
           alert('Inicio de sesión exitoso');
         })
         .catch(error => {
