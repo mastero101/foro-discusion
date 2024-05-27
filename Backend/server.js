@@ -87,7 +87,7 @@ app.get('/messages', (req, res) => {
 });
 
 // Ruta para manejar la solicitud DELETE para eliminar un mensaje por su ID
-app.delete('/messages/:id', authMiddleware, (req, res) => {
+app.delete('/messages/:id', (req, res) => {
   const messageId = req.params.id;
   const userId = req.userId;
 
