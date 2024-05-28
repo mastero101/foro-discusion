@@ -8,8 +8,8 @@ import * as CryptoJS from 'crypto-js';
 })
 export class AuthService {
     private usuarioActual: string | null = null;
-    private endpoint2 = "https://foro-discusion.onrender.com"
-    private endpoint = "http://localhost:5000"
+    private endpoint = "https://foro-discusion.onrender.com"
+    private endpoint2 = "http://localhost:5000"
 
     private secretKey = "F_OBd0lnTWxMsy10mvcHQHvUg5yU14hTNyAqylyU2ECwvp2hKpHXREKBKNWKO67u";
     
