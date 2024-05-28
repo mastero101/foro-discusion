@@ -1,7 +1,6 @@
 import { Component, Output, EventEmitter } from '@angular/core';
-import axios from 'axios';
 
-import { AuthService } from '../auth.service';
+import { MensajeService } from '../mensaje.service';
 
 import { FormsModule } from '@angular/forms';
 
@@ -29,24 +28,11 @@ export class EnviarMensajeComponent {
 
   @Output() mensajeEnviado = new EventEmitter<void>();
 
-  endpoint = "https://foro-discusion.onrender.com"
-  endpoint2 = "http://localhost:5000"
-
-  constructor(private authService: AuthService) { }
+  constructor(private mensajeService: MensajeService) { }
 
   enviarMensaje() {
-    const usuarioActual = this.authService.getUsername();
-    const token = localStorage.getItem('token');
-    if (this.mensaje && usuarioActual && token) {
-      axios.post(this.endpoint + '/new-message', {
-        username: usuarioActual,
-        content: this.mensaje
-      }, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-      .then(response => {
+    this.mensajeService.enviarMensaje(this.mensaje)
+      .then(() => {
         console.log('Mensaje enviado:', this.mensaje);
         this.mensaje = '';
         this.mensajeEnviado.emit();
@@ -54,7 +40,6 @@ export class EnviarMensajeComponent {
       .catch(error => {
         console.error('Error al enviar el mensaje:', error);
       });
-    }
   }
   
 }

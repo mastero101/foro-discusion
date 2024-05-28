@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import axios from 'axios';
 
+import { AuthService } from '../auth.service';
+
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCardModule } from '@angular/material/card';
@@ -31,10 +33,7 @@ export class RegistroComponent implements OnInit{
   registroForm: FormGroup;
   passwordFieldType: string = 'password';
 
-  endpoint = "https://foro-discusion.onrender.com"
-  endpoint2 = "http://localhost:5000"
-
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private authService: AuthService) {
     this.registroForm = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required]
@@ -46,7 +45,8 @@ export class RegistroComponent implements OnInit{
   onSubmit(): void {
     if (this.registroForm.valid) {
       const { username, password } = this.registroForm.value;
-      axios.post(this.endpoint +'/auth/register', { username, password })
+      const endpoint = this.authService.getEndpoint();
+      axios.post(`${endpoint}/auth/register`, { username, password })
         .then(response => {
           alert('Registro exitoso');
         })

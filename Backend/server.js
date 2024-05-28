@@ -87,32 +87,32 @@ app.get('/messages', (req, res) => {
 });
 
 // Ruta para manejar la solicitud DELETE para eliminar un mensaje por su ID
-app.delete('/messages/:id', (req, res) => {
+app.delete('/messages/:id', authMiddleware, async (req, res) => {
   const messageId = req.params.id;
   const userId = req.userId;
 
-  Message.findById(messageId)
-    .then(message => {
-      if (!message) {
-        return res.status(404).json({ error: 'Mensaje no encontrado' });
-      }
+  try {
+    const message = await Message.findById(messageId);
+    if (!message) {
+      return res.status(404).json({ error: 'Mensaje no encontrado' });
+    }
 
-      // Verificar si el usuario tiene permiso para eliminar el mensaje
-      if (message.userId !== userId) {
-        return res.status(403).json({ error: 'No tienes permiso para eliminar este mensaje' });
-      }
+    // Verificar si el usuario es un administrador
+    const user = await User.findById(userId);
+    if (!user.admin) {
+      return res.status(403).json({ error: 'No tienes permiso para eliminar este mensaje' });
+    }
 
-      // Eliminar el mensaje de la base de datos
-      return Message.findByIdAndDelete(messageId);
-    })
-    .then(() => {
-      io.emit('messageDeleted', messageId);
-      res.status(200).json({ message: 'Mensaje eliminado exitosamente' });
-    })
-    .catch(err => {
-      res.status(500).json({ error: 'Error interno del servidor' });
-    });
+    // Eliminar el mensaje de la base de datos
+    await Message.findByIdAndDelete(messageId);
+    io.emit('messageDeleted', messageId);
+    res.status(200).json({ message: 'Mensaje eliminado exitosamente' });
+  } catch (error) {
+    console.error('Error al eliminar el mensaje:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
 });
+
 
 app.post('/auth/register', async (req, res) => {
   const { username, password } = req.body;
@@ -135,12 +135,17 @@ app.post('/auth/login', async (req, res) => {
       return res.status(401).json({ error: 'Credenciales inválidas' });
     }
 
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    res.json({ token });
+    // Incluye el estado de administrador en el token JWT
+    const token = jwt.sign({ 
+      userId: user._id,
+    }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+    res.json({ token, admin: user.admin });
   } catch (error) {
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
+
 
 io.on('connection', (socket) => {
   Message.find().then(messages => {

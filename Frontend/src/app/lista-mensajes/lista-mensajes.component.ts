@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import axios from 'axios';
 
 import { CommonModule } from '@angular/common';
+import { MensajeService } from '../mensaje.service';
+import { AuthService } from '../auth.service';
 
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCardModule } from '@angular/material/card';
@@ -10,6 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 
 import { EnviarMensajeComponent } from '../enviar-mensaje/enviar-mensaje.component';
+
 
 @Component({
   selector: 'app-lista-mensajes',
@@ -29,32 +31,33 @@ import { EnviarMensajeComponent } from '../enviar-mensaje/enviar-mensaje.compone
 export class ListaMensajesComponent implements OnInit {
   mensajes: any[] = [];
   usuarioActual: string = 'nombreDeUsuario';
+  isAdmin: boolean = false;
 
-  endpoint = "https://foro-discusion.onrender.com"
-  endpoint2 = "http://localhost:5000"
-
-  constructor() { }
+  constructor(private mensajeService: MensajeService, private authService: AuthService) { }
 
   ngOnInit(): void {
     this.obtenerMensajes();
+    this.isAdmin = this.authService.isAdmin();
   }
 
   obtenerMensajes() {
-    axios.get<any[]>(this.endpoint + '/messages')
-      .then(response => {
-        this.mensajes = response.data;
+    this.mensajeService.obtenerMensajes()
+      .then(mensajes => {
+        this.mensajes = mensajes;
       })
       .catch(error => {
         console.error('Error al obtener los mensajes:', error);
       });
   }
 
+  confirmarEliminarMensaje(id: string) {
+    if (confirm('¿Estás seguro de que quieres eliminar este mensaje?')) {
+      this.eliminarMensaje(id);
+    }
+  }
+
   eliminarMensaje(id: string) {
-    const token = localStorage.getItem('token');
-    if (token && confirm('¿Estás seguro de que quieres eliminar este mensaje?')) {
-      axios.delete(`https://foro-discusion.onrender.com/messages/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
+    this.mensajeService.eliminarMensaje(id)
       .then(() => {
         this.mensajes = this.mensajes.filter(m => m._id !== id);
       })
@@ -62,7 +65,6 @@ export class ListaMensajesComponent implements OnInit {
         console.error('Error al eliminar el mensaje:', error);
         alert('Error al eliminar el mensaje');
       });
-    }
   }
 
   actualizarMensajes() {

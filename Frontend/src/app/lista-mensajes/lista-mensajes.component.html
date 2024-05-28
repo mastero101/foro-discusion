@@ -14,7 +14,7 @@
       <p>{{ mensaje.content }}</p>
     </mat-card-content>
     <mat-card-actions>
-      <button mat-button color="warn" (click)="eliminarMensaje(mensaje._id)">Eliminar</button>
+      <button mat-button color="warn" *ngIf="isAdmin || mensaje.username === usuarioActual" (click)="confirmarEliminarMensaje(mensaje._id)">Eliminar</button>
     </mat-card-actions>
   </mat-card>
 </div>
