@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import axios from 'axios';
 
 import * as CryptoJS from 'crypto-js';
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,7 @@ export class AuthService {
     private endpoint = "https://foro-discusion.onrender.com"
     private endpoint2 = "http://localhost:5000"
 
-    private secretKey = "F_OBd0lnTWxMsy10mvcHQHvUg5yU14hTNyAqylyU2ECwvp2hKpHXREKBKNWKO67u";
+    private secretKey = environment.secretKey;
     
     constructor() { }
 
