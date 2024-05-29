@@ -9,8 +9,7 @@ import { environment } from '../environments/environment';
 })
 export class AuthService {
     private usuarioActual: string | null = null;
-    private endpoint = "https://foro-discusion.onrender.com"
-    private endpoint2 = "http://localhost:5000"
+    private endpoint = environment.endpoint
 
     private secretKey = environment.secretKey;
     

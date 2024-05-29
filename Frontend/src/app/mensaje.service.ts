@@ -2,16 +2,18 @@ import { Injectable } from '@angular/core';
 import axios from 'axios';
 import { AuthService } from './auth.service';
 
+import { environment } from '../environments/environment';
+
 @Injectable({
   providedIn: 'root'
 })
 export class MensajeService {
+  private endpoint = environment.endpoint
 
   constructor(private authService: AuthService) { }
 
   obtenerMensajes() {
-    const endpoint = this.authService.getEndpoint();
-    return axios.get<any[]>(`${endpoint}/messages`)
+    return axios.get<any[]>(`${this.endpoint}/messages`)
       .then(response => response.data)
       .catch(error => {
         console.error('Error al obtener los mensajes:', error);
@@ -22,10 +24,9 @@ export class MensajeService {
   enviarMensaje(mensaje: string) {
     const usuarioActual = this.authService.getUsername();
     const token = this.authService.getToken();
-    const endpoint = this.authService.getEndpoint();
 
     if (mensaje && usuarioActual && token) {
-      return axios.post(`${endpoint}/new-message`, {
+      return axios.post(`${this.endpoint}/new-message`, {
         username: usuarioActual,
         content: mensaje
       }, {
@@ -45,10 +46,9 @@ export class MensajeService {
 
   eliminarMensaje(id: string) {
     const token = this.authService.getToken();
-    const endpoint = this.authService.getEndpoint();
 
     if (token) {
-      return axios.delete(`${endpoint}/messages/${id}`, {
+      return axios.delete(`${this.endpoint}/messages/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then(response => response.data)
