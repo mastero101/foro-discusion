@@ -19,7 +19,7 @@
   </mat-card>
 </div>
 
-<app-enviar-mensaje (mensajeEnviado)="actualizarMensajes()"></app-enviar-mensaje>
+<app-enviar-mensaje *ngIf="isAuthenticated" (mensajeEnviado)="actualizarMensajes()"></app-enviar-mensaje>
 
 
 

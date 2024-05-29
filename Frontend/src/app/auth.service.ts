@@ -46,6 +46,16 @@ export class AuthService {
       return false;
     }
 
+    isAuthenticated(): boolean {
+      const token = this.getToken();
+      // Simple validation to check if the token exists and is not expired
+      if (token) {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload.exp > Date.now() / 1000;
+      }
+      return false;
+    }
+
     // Función para cifrar el valor del administrador
     encryptAdmin(value: boolean): string {
       const encrypted = CryptoJS.AES.encrypt(String(value), this.secretKey).toString();

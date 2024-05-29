@@ -32,12 +32,14 @@ export class ListaMensajesComponent implements OnInit {
   mensajes: any[] = [];
   usuarioActual: string = 'nombreDeUsuario';
   isAdmin: boolean = false;
+  isAuthenticated: boolean = false;
 
   constructor(private mensajeService: MensajeService, private authService: AuthService) { }
 
   ngOnInit(): void {
     this.obtenerMensajes();
     this.isAdmin = this.authService.isAdmin();
+    this.isAuthenticated = this.authService.isAuthenticated();
   }
 
   obtenerMensajes() {
