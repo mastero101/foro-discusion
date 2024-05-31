@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const ngrok = require('ngrok');
 require('dotenv').config();
 
 const app = express();
@@ -40,15 +41,10 @@ const authMiddleware = (req, res, next) => {
       return res.status(500).json({ error: 'Failed to authenticate token' });
     }
 
-    // Si el token es válido, extraer el ID de usuario del token y establecerlo en req.userId
     req.userId = decoded.userId;
-
-    // Llamar a next() para pasar al siguiente middleware o ruta
     next();
   });
 };
-
-
 
 // Rutas
 app.get('/', (req, res) => {
@@ -62,7 +58,6 @@ app.post('/new-message', authMiddleware, (req, res) => {
     return res.status(400).json({ error: 'Nombre de usuario y contenido del mensaje son obligatorios' });
   }
 
-  // Crear y guardar el nuevo mensaje
   const newMessage = new Message({ username, content });
   newMessage.save()
     .then(() => {
@@ -75,7 +70,6 @@ app.post('/new-message', authMiddleware, (req, res) => {
     });
 });
 
-
 app.get('/messages', (req, res) => {
   Message.find()
     .then(messages => {
@@ -86,7 +80,6 @@ app.get('/messages', (req, res) => {
     });
 });
 
-// Ruta para manejar la solicitud DELETE para eliminar un mensaje por su ID
 app.delete('/messages/:id', authMiddleware, async (req, res) => {
   const messageId = req.params.id;
   const userId = req.userId;
@@ -97,13 +90,11 @@ app.delete('/messages/:id', authMiddleware, async (req, res) => {
       return res.status(404).json({ error: 'Mensaje no encontrado' });
     }
 
-    // Verificar si el usuario es un administrador
     const user = await User.findById(userId);
     if (!user.admin) {
       return res.status(403).json({ error: 'No tienes permiso para eliminar este mensaje' });
     }
 
-    // Eliminar el mensaje de la base de datos
     await Message.findByIdAndDelete(messageId);
     io.emit('messageDeleted', messageId);
     res.status(200).json({ message: 'Mensaje eliminado exitosamente' });
@@ -112,7 +103,6 @@ app.delete('/messages/:id', authMiddleware, async (req, res) => {
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
-
 
 app.post('/auth/register', async (req, res) => {
   const { username, password } = req.body;
@@ -135,7 +125,6 @@ app.post('/auth/login', async (req, res) => {
       return res.status(401).json({ error: 'Credenciales inválidas' });
     }
 
-    // Incluye el estado de administrador en el token JWT
     const token = jwt.sign({ 
       userId: user._id,
     }, process.env.JWT_SECRET, { expiresIn: '1h' });
@@ -145,7 +134,6 @@ app.post('/auth/login', async (req, res) => {
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
-
 
 io.on('connection', (socket) => {
   Message.find().then(messages => {
@@ -167,4 +155,12 @@ io.on('connection', (socket) => {
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   console.log(`Servidor corriendo en el puerto ${PORT}`);
+  // Conectar a Ngrok
+  ngrok.connect({ addr: PORT, authtoken: process.env.NGROK_AUTHTOKEN })
+    .then(url => {
+      console.log(`Ngrok URL: ${url}`);
+    })
+    .catch(error => {
+      console.error('Error connecting to ngrok:', error);
+    });
 });
