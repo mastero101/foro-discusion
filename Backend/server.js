@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const ngrok = require('ngrok');
+// const ngrok = require('ngrok'); // Comentado para referencia futura
 require('dotenv').config();
 
 const app = express();
@@ -156,6 +156,7 @@ const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   console.log(`Servidor corriendo en el puerto ${PORT}`);
   // Conectar a Ngrok
+  /*
   ngrok.connect({ addr: PORT, authtoken: process.env.NGROK_AUTHTOKEN })
     .then(url => {
       console.log(`Ngrok URL: ${url}`);
@@ -163,4 +164,5 @@ server.listen(PORT, () => {
     .catch(error => {
       console.error('Error connecting to ngrok:', error);
     });
+  */
 });
